@@ -1,0 +1,49 @@
+version: '3.8'
+
+name: sa_usecase_1_dolt_remote
+
+services:
+  dr_source:
+    container_name: dr_source
+    build:
+      context: .
+      dockerfile: ./remote/source/Dockerfile
+    volumes:
+      - ./db/.dolt/noms:/home/db/.dolt/noms
+      - ./db/.dolt/tempf:/home/db/.dolt/tempf
+      - ./db/.dolt/tmp:/home/db/.dolt/tmp
+    ports:
+      - "33100:3306"
+
+  
+  dr_replica_1:
+    container_name: dr_replica_1
+    build:
+      context: .
+      dockerfile: ./remote/replica/Dockerfile
+    ports:
+      - "33101:3306"
+    depends_on:
+      - dr_source
+
+  
+  dr_replica_2:
+    container_name: dr_replica_2
+    build:
+      context: .
+      dockerfile: ./remote/replica/Dockerfile
+    ports:
+      - "33102:3306"
+    depends_on:
+      - dr_source
+      
+  
+  dr_replica_3:
+    container_name: dr_replica_3
+    build:
+      context: .
+      dockerfile: ./remote/replica/Dockerfile
+    ports:
+      - "33103:3306"
+    depends_on:
+      - dr_source

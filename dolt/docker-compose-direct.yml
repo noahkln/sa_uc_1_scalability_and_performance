@@ -1,0 +1,51 @@
+version: '3.8'
+
+name: sa_usecase_1_dolt_direct
+
+services:
+  dd_primary:
+    container_name: dd_primary
+    build:
+      context: .
+      dockerfile: ./direct/primary/Dockerfile
+    volumes:
+      - ./db/.dolt/noms:/home/db/.dolt/noms
+      - ./db/.dolt/tempf:/home/db/.dolt/tempf
+      - ./db/.dolt/tmp:/home/db/.dolt/tmp
+    ports:
+      - "33100:3306"
+    networks:
+      - direct_replication
+    
+  dd_standby_1:
+    container_name: dd_standby_1
+    build:
+      context: .
+      dockerfile: ./direct/standby_1/Dockerfile
+    ports:
+      - "33101:3306"
+    networks:
+      - direct_replication
+
+  dd_standby_2:
+    container_name: dd_standby_2
+    build:
+      context: .
+      dockerfile: ./direct/standby_2/Dockerfile
+    ports:
+      - "33102:3306"
+    networks:
+      - direct_replication
+
+  dd_standby_3:
+    container_name: dd_standby_3
+    build:
+      context: .
+      dockerfile: ./direct/standby_3/Dockerfile
+    ports:
+      - "33103:3306"
+    networks:
+      - direct_replication
+
+networks:
+  direct_replication:

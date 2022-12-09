@@ -1,0 +1,40 @@
+log_level: info
+
+behavior:
+  read_only: false
+  autocommit: true
+  persistence_behavior: load
+  disable_client_multi_statements: false
+
+user:
+  name: "nkhartwig"
+  password: "tmp"
+
+listener:
+  host: 0.0.0.0
+  port: 3306
+  max_connections: 100
+  read_timeout_millis: 28800000
+  write_timeout_millis: 28800000
+  tls_key: null
+  tls_cert: null
+  require_secure_transport: null
+  allow_cleartext_passwords: null
+  socket: null
+
+cluster:
+  standby_remotes:
+  - name: standby_1
+    remote_url_template: http://dd_standby_1:50000/{database}
+  - name: standby_2
+    remote_url_template: http://dd_standby_2:50000/{database}
+  - name: standby_3
+    remote_url_template: http://dd_standby_3:50000/{database}
+  bootstrap_role: primary
+  bootstrap_epoch: 1
+  remotesapi:
+    port: 50000
+
+databases:
+  - name: db
+    path: /home/db
