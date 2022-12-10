@@ -9,9 +9,10 @@
 
 2. Messungen mit Python Script
    1. `cd <project-root>/dolt_status_command/python`
-   2. Datei _.env.template_ nach _.env_ kopieren
-   3. Setzen der gewählten Konfigurationsdaten für die Datenbank in _.env_
-   4. Kostanten in _measure.py_ für die gewünschten Messungen anpassen
-   5. `python ./measure.py`
-   6. Konstanten in _evaluate.py_ für die gewünschte Ausgabe der Ergebnisse anpassen
-   7. `python ./evaluate.py`
+   2. `pip install -r ./requirements.txt`
+   3. Datei _.env.template_ nach _.env_ kopieren
+   4. Setzen der gewählten Konfigurationsdaten für die Datenbank in _.env_
+   5. Kostanten in _measure.py_ für die gewünschten Messungen anpassen
+   6. `python ./measure.py`
+   7. Konstanten in _evaluate.py_ für die gewünschte Ausgabe der Ergebnisse anpassen
+   8. `python ./evaluate.py`
