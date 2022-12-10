@@ -11,37 +11,36 @@ from mysql.connector import MySQLConnection
 
 FOLDER = "./csv_measurement_results"
 FOLDER_DATA = "./csv_database_data"
-VERBOSE = True
+VERBOSE = False
 TABLES = np.arange(1, 4)
-ROWS_PER_TABLE = np.array([1, 10, 100])
-COLS_PER_TABLE = np.array([3])
-ITERATIONS_PER_MEASUREMENT = 5
+ROWS_PER_TABLE = np.logspace(4, 6, 3, dtype=np.int64)
+COLS_PER_TABLE = 3
+ITERATIONS_PER_MEASUREMENT = 10
 DELETE_CSV = True
 INITIAL_COMMIT = "uo0ghlafh12kmpt6b47u4vic25s6v8p0"
-MEASURE_AFTER_TABLE_CREATION = True
-METHOD = "DIFF"
+MEASURE_AFTER_TABLE_CREATION = False
+METHOD = "STATUS" # "DIFF" or "STATUS"
   
 
 def create_csv(
-    row_count: np.uint64,
-    col_count: np.uint32
+    row_count: np.uint64
   ) -> str | None:
   timestamp = datetime.now().strftime("%d%m%Y_%H%M%S_%f")
-  filename = f"data_{row_count}_rows_{col_count}_cols_{timestamp}.csv"
+  filename = f"table_data_{row_count}_rows_{timestamp}.csv"
   
   if VERBOSE: print(f"[CSV  ] Generating '{filename}'")
   
   header = ["id"]
   
-  for col in range(col_count):
-    header.append(f"col_{col+1}")
+  for i in range(COLS_PER_TABLE):
+    header.append(f"col{i+1}")
   
   try:
     with open(f"{FOLDER_DATA}/{filename}", "w", newline="") as f:
       writer = csv.writer(f)
       
       primary_keys = np.arange(1, row_count+1)[:, np.newaxis]
-      col_data = np.random.randint(low=np.iinfo(np.int8).min, high=np.iinfo(np.int8).max, size=(row_count, col_count), dtype=np.int8)
+      col_data = np.random.randint(low=np.iinfo(np.int8).min, high=np.iinfo(np.int8).max, size=(row_count, COLS_PER_TABLE), dtype=np.int8)
       
       data = np.concatenate([primary_keys, col_data], 1)
       writer.writerow(header)
@@ -57,9 +56,9 @@ def create_csv(
     return None
   
 
-def import_data_for_dolt_status(conn: MySQLConnection, table_count: np.uint8, row_count: np.uint64, col_count: np.uint32):
+def import_data_for_dolt_status(conn: MySQLConnection, table_count: np.uint8, row_count: np.uint64):
   if VERBOSE: print(f"[IMPRT] Starting import")
-  filename = create_csv(row_count, col_count)
+  filename = create_csv(row_count)
   filepath = f"{FOLDER_DATA}/{filename}"  
   
   if VERBOSE: print(f"[IMPRT] Creating {table_count} tables")
@@ -106,9 +105,9 @@ def import_data_for_dolt_status(conn: MySQLConnection, table_count: np.uint8, ro
     if VERBOSE: print(f"[IMPRT] Skipped")
 
 
-def import_data_for_dolt_diff(conn: MySQLConnection, table_count: np.uint8, row_count: np.uint64, col_count: np.uint32):
+def import_data_for_dolt_diff(conn: MySQLConnection, table_count: np.uint8, row_count: np.uint64):
   if VERBOSE: print(f"[IMPRT] Starting import")
-  filename = create_csv(row_count, col_count)
+  filename = create_csv(row_count)
   filepath = f"{FOLDER_DATA}/{filename}"  
   
   if VERBOSE: print(f"[IMPRT] Creating {table_count} tables")
@@ -249,7 +248,7 @@ def measure_dolt_diff(conn: MySQLConnection, tables: np.ndarray):
 
 def create_result_csv(scores: np.ndarray):
   timestamp = datetime.now().strftime("%d%m%Y_%H%M%S_%f")
-  filename = f"mean_score_{len(TABLES)}_tables_{len(COLS_PER_TABLE)}_cols_{len(ROWS_PER_TABLE)}_rows_{ITERATIONS_PER_MEASUREMENT}_iterations_{'data' if MEASURE_AFTER_TABLE_CREATION else 'table'}_{METHOD.lower()}_{timestamp}.csv"
+  filename = f"mean_score_{len(TABLES)}_tables_{COLS_PER_TABLE}_cols_{len(ROWS_PER_TABLE)}_rows_{ITERATIONS_PER_MEASUREMENT}_iterations_{'data' if MEASURE_AFTER_TABLE_CREATION else 'table'}_{METHOD.lower()}_{timestamp}.csv"
   
   with open(f"{FOLDER}/{filename}", "w", newline="") as f:
     writer = csv.writer(f)
@@ -260,8 +259,7 @@ def create_result_csv(scores: np.ndarray):
     
     for idx_t, t in enumerate(TABLES):
       for idx_r, r in enumerate(ROWS_PER_TABLE):
-        for idx_c, c in enumerate(COLS_PER_TABLE):
-          writer.writerow([t, r, c, scores[idx_t, idx_r, idx_c]])
+          writer.writerow([t, r, scores[idx_t, idx_r]])
     
     f.close()
 
@@ -286,32 +284,30 @@ def main():
   check_for_empty_database(conn)
   configure_database(conn, env)
   
-  data_sum = np.zeros((len(TABLES), len(ROWS_PER_TABLE), len(COLS_PER_TABLE)), dtype=np.float64)
+  data_sum = np.zeros((len(TABLES), len(ROWS_PER_TABLE)), dtype=np.float64)
   
   if METHOD == "DIFF":
     for idx_t, t in enumerate(TABLES):
       for idx_r, r in enumerate(ROWS_PER_TABLE):
-        for idx_c, c in enumerate(COLS_PER_TABLE):
           for _ in range(ITERATIONS_PER_MEASUREMENT):
-            import_data_for_dolt_diff(conn, t, r, c)
+            import_data_for_dolt_diff(conn, t, r)
             table_names = []
             for i in range(t):
               table_names.append(f"table_{i+1}")
-            data_sum[idx_t, idx_r, idx_c] += measure_dolt_diff(conn, table_names)
+            data_sum[idx_t, idx_r] += measure_dolt_diff(conn, table_names)
             
             query(conn, f"CALL dolt_reset(\"--hard\", \"{INITIAL_COMMIT}\")")
   elif METHOD == "STATUS":
     for idx_t, t in enumerate(TABLES):
       for idx_r, r in enumerate(ROWS_PER_TABLE):
-        for idx_c, c in enumerate(COLS_PER_TABLE):
           for _ in range(ITERATIONS_PER_MEASUREMENT):
-            import_data_for_dolt_status(conn, t, r, c)
-            data_sum[idx_t, idx_r, idx_c] += measure_dolt_status(conn)
+            import_data_for_dolt_status(conn, t, r)
+            data_sum[idx_t, idx_r] += measure_dolt_status(conn)
             
             query(conn, "CALL dolt_add(\".\")")
             query(conn, "CALL dolt_commit(\"-m\", \"created tables\")")
             query(conn, f"CALL dolt_reset(\"--hard\", \"{INITIAL_COMMIT}\")")
-            
+
   
   print("[SCORE] Summed score")
   print("[SCORE] " + np.array2string(data_sum, prefix="[SCORE] "))

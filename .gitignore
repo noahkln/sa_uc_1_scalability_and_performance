@@ -4,6 +4,5 @@
 **/*.env
 
 # dolt_status_command
-./dolt_status_command/**/csv_database_data/*.csv
-./dolt_status_command/**/__pycache__/*.csv
-./dolt_status_command/**/csv_database_data/*.csv
+./dolt_status_command/**/csv_database_data
+./dolt_status_command/**/__pycache__
