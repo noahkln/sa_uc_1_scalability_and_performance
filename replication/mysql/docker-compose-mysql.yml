@@ -6,7 +6,6 @@ services:
   my_source:
     container_name: my_source
     image: mysql:8
-    restart: always
     command:
       - "mysqld"
       - "--server-id=1"
@@ -14,74 +13,30 @@ services:
       - "--log-error-verbosity=8"
     ports:
       - "33100:3306"
-    volumes:
-      - data_dir:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=kla1sdALKS4354DJa768klsdals41j1dkljas7DASDk4ll3ajs8dlASD
-      - MYSQL_USER=nkhartwig
-      - MYSQL_PASSWORD=tmp
+      - MYSQL_USER=sa_uc_1
+      - MYSQL_PASSWORD=sa_uc_1_password
       - MYSQL_DATABASE=db
     networks:
       - mysql_replication
 
       
-  my_replica_1:
-    container_name: my_replica_1
+  my_replica:
+    container_name: my_replica
     image: mysql:8
-    restart: always
     command:
       - "mysqld"
       - "--server-id=2"
+      - "--log-slave-updates"
       - "--log-bin=mysql-bin"
       - "--log-error-verbosity=8"
     ports:
       - "33101:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=kla1sdALKS4354DJa768klsdals41j1dkljas7DASDk4ll3ajs8dlASD
-      - MYSQL_USER=nkhartwig
-      - MYSQL_PASSWORD=tmp
-      - MYSQL_DATABASE=db
-    depends_on:
-      - my_source
-    networks:
-      - mysql_replication
-      
-
-  my_replica_2:
-    container_name: my_replica_2
-    image: mysql:8
-    restart: always
-    command:
-      - "mysqld"
-      - "--server-id=3"
-      - "--log-bin=mysql-bin"
-    ports:
-      - "33102:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=kla1sdALKS4354DJa768klsdals41j1dkljas7DASDk4ll3ajs8dlASD
-      - MYSQL_USER=nkhartwig
-      - MYSQL_PASSWORD=tmp
-      - MYSQL_DATABASE=db
-    depends_on:
-      - my_source
-    networks:
-      - mysql_replication
-  
-
-  my_replica_3:
-    container_name: my_replica_3
-    image: mysql:8
-    restart: always
-    command:
-      - "mysqld"
-      - "--server-id=4"
-      - "--log-bin=mysql-bin"
-    ports:
-      - "33103:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=kla1sdALKS4354DJa768klsdals41j1dkljas7DASDk4ll3ajs8dlASD
-      - MYSQL_USER=nkhartwig
-      - MYSQL_PASSWORD=tmp
+      - MYSQL_USER=sa_uc_1
+      - MYSQL_PASSWORD=sa_uc_1_password
       - MYSQL_DATABASE=db
     depends_on:
       - my_source
@@ -96,30 +51,39 @@ services:
       dockerfile: Dockerfile.python
     volumes:
       - ./configure_replication.py:/app/main.py
-      - ./dumps:/dumps
     links:
       - my_source:master_db
-      - my_replica_1:slave_1_db
-      - my_replica_2:slave_2_db
-      - my_replica_3:slave_3_db
+      - my_replica:slave_db
     profiles:
       - donotstart
     networks:
       - mysql_replication
 
   
-  my_pma:
-    container_name: my_pma
+  my_pma_source:
+    container_name: my_pma_source
     image: phpmyadmin:5.2
-    restart: always
     ports:
       - "8080:80"
     depends_on:
       - my_source
     links:
       - my_source:db
-    environment:
-      - UPLOAD_LIMIT=1G
+    networks:
+      - mysql_replication
+    profiles:
+      - donotstart
+
+
+  my_pma_replica:
+    container_name: my_pma_replica
+    image: phpmyadmin:5.2
+    ports:
+      - "8081:80"
+    depends_on:
+      - my_replica
+    links:
+      - my_source:db
     networks:
       - mysql_replication
     profiles:

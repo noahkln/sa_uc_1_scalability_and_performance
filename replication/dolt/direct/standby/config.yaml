@@ -1,14 +1,14 @@
 log_level: info
 
 behavior:
-  read_only: false
+  read_only: true
   autocommit: true
   persistence_behavior: load
   disable_client_multi_statements: false
 
 user:
-  name: "nkhartwig"
-  password: "tmp"
+  name: "sa_uc_1"
+  password: "sa_uc_1_password"
 
 listener:
   host: 0.0.0.0
@@ -26,10 +26,6 @@ cluster:
   standby_remotes:
   - name: primary
     remote_url_template: http://dd_primary:50000/{database}
-  - name: standby_2
-    remote_url_template: http://dd_standby_2:50000/{database}
-  - name: standby_3
-    remote_url_template: http://dd_standby_3:50000/{database}
   bootstrap_role: standby
   bootstrap_epoch: 1
   remotesapi:

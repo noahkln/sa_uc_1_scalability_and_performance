@@ -8,42 +8,18 @@ services:
     build:
       context: .
       dockerfile: ./direct/primary/Dockerfile
-    volumes:
-      - ./db/.dolt/noms:/home/db/.dolt/noms
-      - ./db/.dolt/tempf:/home/db/.dolt/tempf
-      - ./db/.dolt/tmp:/home/db/.dolt/tmp
     ports:
       - "33100:3306"
     networks:
       - direct_replication
     
-  dd_standby_1:
-    container_name: dd_standby_1
+  dd_standby:
+    container_name: dd_standby
     build:
       context: .
-      dockerfile: ./direct/standby_1/Dockerfile
+      dockerfile: ./direct/standby/Dockerfile
     ports:
       - "33101:3306"
-    networks:
-      - direct_replication
-
-  dd_standby_2:
-    container_name: dd_standby_2
-    build:
-      context: .
-      dockerfile: ./direct/standby_2/Dockerfile
-    ports:
-      - "33102:3306"
-    networks:
-      - direct_replication
-
-  dd_standby_3:
-    container_name: dd_standby_3
-    build:
-      context: .
-      dockerfile: ./direct/standby_3/Dockerfile
-    ports:
-      - "33103:3306"
     networks:
       - direct_replication
 

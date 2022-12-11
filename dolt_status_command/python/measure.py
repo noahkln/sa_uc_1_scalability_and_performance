@@ -1,4 +1,3 @@
-import array
 import numpy as np
 import csv
 from datetime import datetime
@@ -13,13 +12,13 @@ FOLDER = "./csv_measurement_results"
 FOLDER_DATA = "./csv_database_data"
 VERBOSE = False
 TABLES = np.arange(1, 4)
-ROWS_PER_TABLE = np.logspace(4, 6, 3, dtype=np.int64)
+ROWS_PER_TABLE = np.logspace(2, 6, 12, dtype=np.int64)
 COLS_PER_TABLE = 3
-ITERATIONS_PER_MEASUREMENT = 10
+ITERATIONS_PER_MEASUREMENT = 3
 DELETE_CSV = True
-INITIAL_COMMIT = "uo0ghlafh12kmpt6b47u4vic25s6v8p0"
-MEASURE_AFTER_TABLE_CREATION = False
-METHOD = "STATUS" # "DIFF" or "STATUS"
+INITIAL_COMMIT = "1rt6jmt0ds3rur10uv5fq1u0gg3kr89s"
+MEASURE_AFTER_TABLE_CREATION = True
+METHOD = "DIFF" # "DIFF" or "STATUS"
   
 
 def create_csv(
@@ -148,11 +147,11 @@ def import_data_for_dolt_diff(conn: MySQLConnection, table_count: np.uint8, row_
   
   if VERBOSE: print(f"[IMPRT] Import done")
   
-  if VERBOSE: print(f"[IMPRT] Removing csv files")
+  if VERBOSE: print(f"[IMPRT] Removing csv file")
   if DELETE_CSV:
     os.remove(filepath)
     
-    if VERBOSE: print(f"[IMPRT] Files removed")
+    if VERBOSE: print(f"[IMPRT] File removed")
   else:
     if VERBOSE: print(f"[IMPRT] Skipped")
 

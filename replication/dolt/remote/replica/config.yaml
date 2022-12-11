@@ -1,4 +1,4 @@
-log_level: info
+log_level: debug
 
 behavior:
   read_only: true
@@ -7,8 +7,8 @@ behavior:
   disable_client_multi_statements: false
 
 user:
-  name: "nkhartwig"
-  password: "tmp"
+  name: "sa_uc_1"
+  password: "sa_uc_1_password"
 
 listener:
   host: 0.0.0.0
