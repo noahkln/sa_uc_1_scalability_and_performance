@@ -159,6 +159,7 @@ def measure(m: MySQLConnection, r: MySQLConnection, row_count: np.uint64):
     m_cur.execute(q)
     t1 = time.perf_counter()
   
+  invalid = 0
   while True:
     try:
       r_cur.execute(f"SELECT * FROM {table_name};")
@@ -166,7 +167,14 @@ def measure(m: MySQLConnection, r: MySQLConnection, row_count: np.uint64):
         t2 = time.perf_counter()
         break
     except:
-      pass
+      invalid += 1
+      if invalid > 10:
+        print("[ERROR] Return results after 10 tries")
+        m_cur.close()
+        r_cur.close()
+        results = np.array([t1 - t0, -1])
+        return results
+  
   m_cur.fetchall()
   m_cur.close()
   r_cur.fetchall()
