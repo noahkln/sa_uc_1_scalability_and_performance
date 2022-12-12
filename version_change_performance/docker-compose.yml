@@ -1,0 +1,25 @@
+version: '3.8'
+
+name: sa_usecase_1_version_change_performance
+
+services:
+  mysql:
+    container_name: change_performance_mysql
+    image: mysql:8
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=sa_uc_1
+      - MYSQL_PASSWORD=sa_uc_1_password
+      - MYSQL_ALLOW_EMPTY_PASSWORD=True
+    ports:
+      - "33100:3306"
+    
+  dolt:
+    container_name: change_performance_dolt
+    build:
+      context: .
+      args:
+        - MAIL
+        - USER
+    ports:
+      - "33101:3306"
