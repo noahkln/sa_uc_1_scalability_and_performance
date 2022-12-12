@@ -2,7 +2,7 @@
 
 if [ ! $(dolt remote | grep origin) ];
 then
-  dolt remote add origin https://doltremoteapi.dolthub.com/noahkln/sa_uc_1_replication
+  dolt remote add origin noahkln/sa_uc_1_replication
 fi
 
 dolt sql -q "set @@PERSIST.dolt_replicate_heads = 'replication';"
