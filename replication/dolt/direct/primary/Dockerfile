@@ -23,4 +23,5 @@ EXPOSE 3306
 
 CMD cd /app/db && \
   /app/add_remotes.sh && \
+  rm -f /app/db/.dolt/sql-server.lock && \
   dolt sql-server --config /app/config.yaml

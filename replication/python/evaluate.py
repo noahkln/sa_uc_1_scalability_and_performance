@@ -55,16 +55,15 @@ def main():
     plt.scatter(x_repl, y_replication, marker="x", c=cmap[1, :][np.newaxis, :])
     plt.plot(x_repl, y_replication, c=cmap[1, :][np.newaxis, :], label="Replication completed")
       
-    plt.xscale("log")
-    plt.xlabel("rows")
-    plt.ylabel("mean score [s]")
+    plt.xlabel("Anzahl der Zeilen")
+    plt.ylabel("Dauer [s]")
     plt.legend()
     
-    title = f"Mean score for replication of {col_count} columns with mean over {iteration_count} samples\n"
+    title = f"Durchschnittliches Ergebnis über {iteration_count} Messungen für die Replikation von Tabellen mit {col_count} Spalten\n"
     if method == "remote":
-      title += f"Measured remote replication"
+      title += f"Indirekte Replikation"
     elif method == "direct":
-      title += f"Measured direct replication"
+      title += f"Direkte Replikation"
     plt.title(title)
         
     timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")

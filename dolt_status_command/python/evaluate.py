@@ -47,20 +47,20 @@ def main():
       
       current_plot_data = data[lower_idx:upper_idx, :]
       
-      plt.scatter(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"], marker="x", c=cmap[i, :][np.newaxis, :])
-      plt.plot(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"], c=cmap[i, :][np.newaxis, :], label=f"{np.int32(data[lower_idx, 0])} table(s)")
+      plt.scatter(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"] / (i+1), marker="x", c=cmap[i, :][np.newaxis, :])
+      plt.plot(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"] / (i+1), c=cmap[i, :][np.newaxis, :], label=f"{np.int32(data[lower_idx, 0])} Tabelle(n)")
       
-    plt.xscale("log")
-    plt.xlabel("rows")
-    plt.ylabel("mean score [s]")
+    plt.xlabel("Anzahl der Zeilen")
+    plt.ylabel("Dauer [s]")
     plt.legend()
     
     title = f"Mean score for {col_count} columns with mean over {iteration_count} samples\n"
+    title = f"Durchschnitt über {iteration_count} Messungen für Tabellene mit {col_count} Spalten\n"
     if measure_without_table_creation:
-      title += f"Measurement includes only data input without table creation\n"
+      title += f"Erstellung der Tabellen nicht mit inbegriffen\n"
     else:
-      title += f"Measurement includes table and data creation\n"
-    title += f"Measured dolt {diff_or_status_command} command"
+      title += f"Erstellung der Tabellen mit inbegriffen\n"
+    title += f"Befehl: dolt {diff_or_status_command}"
     plt.title(title)
         
     timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")

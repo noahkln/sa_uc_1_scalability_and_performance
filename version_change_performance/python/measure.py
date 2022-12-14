@@ -10,9 +10,9 @@ from mysql.connector import MySQLConnection
 
 FOLDER = "./csv_measurement_results"
 FOLDER_DATA = "./csv_database_data"
-VERBOSE = True
-ROWS_PER_TABLE = np.logspace(2, 6, 12, dtype=np.int64)
-ITERATIONS_PER_MEASUREMENT = 3
+VERBOSE = False
+ROWS_PER_TABLE = np.linspace(10**2, 10**6, 8, dtype=np.int64)
+ITERATIONS_PER_MEASUREMENT = 10
 DELETE_CSV = True
   
 

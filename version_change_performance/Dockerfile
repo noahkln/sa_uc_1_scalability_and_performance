@@ -23,4 +23,6 @@ RUN cd /app/db && dolt init
 
 EXPOSE 3306
 
-CMD cd /app/db && dolt sql-server --host=0.0.0.0 --user=sa_uc_1 --password=sa_uc_1_password
+CMD cd /app/db && \
+  rm -f /app/db/.dolt/sql-server.lock && \
+  dolt sql-server --host=0.0.0.0 --user=sa_uc_1 --password=sa_uc_1_password

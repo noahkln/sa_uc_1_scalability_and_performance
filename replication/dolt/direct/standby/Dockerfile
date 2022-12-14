@@ -16,4 +16,6 @@ COPY ./direct/standby/config.yaml /app/config.yaml
 
 EXPOSE 3306
 
-CMD cd /app/db && dolt sql-server --config /app/config.yaml
+CMD cd /app/db && \
+    rm -f /app/db/.dolt/sql-server.lock && \
+    dolt sql-server --config /app/config.yaml

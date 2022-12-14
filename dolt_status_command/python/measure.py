@@ -12,9 +12,9 @@ FOLDER = "./csv_measurement_results"
 FOLDER_DATA = "./csv_database_data"
 VERBOSE = False
 TABLES = np.arange(1, 4)
-ROWS_PER_TABLE = np.logspace(2, 6, 12, dtype=np.int64)
+ROWS_PER_TABLE = np.linspace(10**2, 10**6, 10, dtype=np.int64)
 COLS_PER_TABLE = 3
-ITERATIONS_PER_MEASUREMENT = 3
+ITERATIONS_PER_MEASUREMENT = 10
 DELETE_CSV = True
 INITIAL_COMMIT = "1rt6jmt0ds3rur10uv5fq1u0gg3kr89s"
 MEASURE_AFTER_TABLE_CREATION = True

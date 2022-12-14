@@ -42,12 +42,12 @@ def main():
     plt.scatter(data[:,0].flatten(), data[:, headers == "dolt"].flatten(), marker="x", c=cmap[1, :][np.newaxis, :])
     plt.plot(data[:,0].flatten(), data[:, headers == "dolt"].flatten(), c=cmap[1, :][np.newaxis, :], label=f"Dolt")
       
-    plt.xscale("log")
-    plt.xlabel("rows")
-    plt.ylabel("mean score [s]")
+    # plt.xscale("log")
+    plt.xlabel("Anzahl der Zeilen")
+    plt.ylabel("Dauer [s]")
     plt.legend()
     
-    title = f"Mean score for version change with mean over {iteration_count} samples"
+    title = f"Durchschnittlicher Ergebnisse über {iteration_count} Messungen für den Wechsel der Version"
     plt.title(title)
         
     timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
