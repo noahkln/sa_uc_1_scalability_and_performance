@@ -46,7 +46,7 @@ def main():
       upper_idx = np.int32((i+1)*different_rows)
       
       current_plot_data = data[lower_idx:upper_idx, :]
-      
+            
       plt.scatter(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"] / (i+1), marker="x", c=cmap[i, :][np.newaxis, :])
       plt.plot(current_plot_data[:, headers == "rows"], current_plot_data[:, headers == "score"] / (i+1), c=cmap[i, :][np.newaxis, :], label=f"{np.int32(data[lower_idx, 0])} Tabelle(n)")
       
@@ -54,7 +54,6 @@ def main():
     plt.ylabel("Dauer [s]")
     plt.legend()
     
-    title = f"Mean score for {col_count} columns with mean over {iteration_count} samples\n"
     title = f"Durchschnitt über {iteration_count} Messungen für Tabellene mit {col_count} Spalten\n"
     if measure_without_table_creation:
       title += f"Erstellung der Tabellen nicht mit inbegriffen\n"
